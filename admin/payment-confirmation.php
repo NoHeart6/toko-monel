@@ -252,7 +252,75 @@ $pendingCount = countPendingOrders();
         .payment-proof {
             max-width: 100%;
             border-radius: 10px;
-            margin-top: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .payment-proof:hover {
+            transform: scale(1.02);
+        }
+
+        .payment-proof-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            padding: 20px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        .payment-proof-modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            animation: zoomIn 0.3s ease-out;
+        }
+
+        .payment-proof-modal-close {
+            position: absolute;
+            right: 35px;
+            top: 15px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2001;
+        }
+
+        .payment-proof-modal-close:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .payment-proof {
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-proof:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .alert {
@@ -558,8 +626,34 @@ $pendingCount = countPendingOrders();
         </div>
     </div>
 
+    <!-- Payment Proof Modal -->
+    <div id="paymentProofModal" class="payment-proof-modal">
+        <span class="payment-proof-modal-close">&times;</span>
+        <img class="payment-proof-modal-content" id="paymentProofModalImg">
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Payment proof zoom functionality
+        var paymentProofModal = document.getElementById('paymentProofModal');
+        var paymentProofModalImg = document.getElementById('paymentProofModalImg');
+        var paymentProofModalClose = document.getElementsByClassName('payment-proof-modal-close')[0];
+
+        function showPaymentProofModal(imgSrc) {
+            paymentProofModal.style.display = 'block';
+            paymentProofModalImg.src = imgSrc;
+        }
+
+        paymentProofModalClose.onclick = function() {
+            paymentProofModal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == paymentProofModal) {
+                paymentProofModal.style.display = 'none';
+            }
+        }
+
         document.getElementById('orderDetailModal').addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var items = JSON.parse(button.getAttribute('data-order-items'));
@@ -606,8 +700,16 @@ $pendingCount = countPendingOrders();
             
             // Update payment proof
             var proofContainer = document.getElementById('paymentProofContainer');
-            if (paymentProof) {
-                proofContainer.innerHTML = `<img src="${paymentProof}" class="img-fluid payment-proof" alt="Bukti Pembayaran">`;
+            if (paymentProof && paymentProof !== '') {
+                proofContainer.innerHTML = `
+                    <div class="text-center">
+                        <img src="${paymentProof}" class="img-fluid payment-proof mb-2" alt="Bukti Pembayaran" 
+                             onclick="showPaymentProofModal('${paymentProof}')" 
+                             style="max-width: 100%; max-height: 400px; border-radius: 10px; cursor: pointer;">
+                        <div class="mt-2">
+                            <small class="text-muted">Klik gambar untuk memperbesar</small>
+                        </div>
+                    </div>`;
             } else {
                 proofContainer.innerHTML = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Bukti pembayaran belum diunggah</div>';
             }

@@ -316,6 +316,20 @@ $isEmpty = empty($ordersArray);
     </div>
 
     <div class="container">
+        <?php if (isset($_GET['status']) && isset($_GET['message'])): ?>
+            <?php if ($_GET['status'] === 'success'): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars(urldecode($_GET['message'])); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars(urldecode($_GET['message'])); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
         <div class="orders-container">
             <?php if ($isEmpty): ?>
                 <div class="empty-orders animate__animated animate__fadeIn">
@@ -391,13 +405,18 @@ $isEmpty = empty($ordersArray);
                                         ?>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-detail" data-bs-toggle="modal" data-bs-target="#orderDetailModal" 
+                                        <button type="button" class="btn btn-info btn-action" data-bs-toggle="modal" data-bs-target="#orderDetailModal" 
                                                 data-order-id="<?php echo (string)$order->_id; ?>"
                                                 data-order-items='<?php echo htmlspecialchars(json_encode($order->items)); ?>'
                                                 data-order-address="<?php echo htmlspecialchars($order->shipping_address); ?>"
                                                 data-payment-method="<?php echo $order->payment_method; ?>">
-                                            <i class="fas fa-eye me-1"></i> Detail
+                                            <i class="fas fa-eye me-1"></i>Detail
                                         </button>
+                                        <?php if ($order->payment_status === 'pending'): ?>
+                                            <button type="button" class="btn btn-primary btn-action" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal" data-order-id="<?php echo (string)$order->_id; ?>">
+                                                <i class="fas fa-upload me-1"></i>Upload Bukti
+                                            </button>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -456,6 +475,40 @@ $isEmpty = empty($ordersArray);
         </div>
     </div>
 
+    <!-- Upload Payment Modal -->
+    <div class="modal fade" id="uploadPaymentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-upload me-2"></i>Upload Bukti Pembayaran
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" enctype="multipart/form-data" action="upload_payment.php">
+                    <div class="modal-body">
+                        <input type="hidden" name="order_id" id="uploadOrderId">
+                        <div class="mb-3">
+                            <label for="payment_proof" class="form-label">
+                                <i class="fas fa-image me-2"></i>Bukti Pembayaran
+                            </label>
+                            <input type="file" class="form-control" id="payment_proof" name="payment_proof" accept="image/*" required>
+                            <small class="text-muted">Format yang didukung: JPG, PNG, JPEG. Maksimal 2MB.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('orderDetailModal').addEventListener('show.bs.modal', function (event) {
@@ -500,6 +553,12 @@ $isEmpty = empty($ordersArray);
                     paymentMethodText = paymentMethod;
             }
             document.getElementById('paymentMethod').textContent = paymentMethodText;
+        });
+
+        document.getElementById('uploadPaymentModal').addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var orderId = button.getAttribute('data-order-id');
+            document.getElementById('uploadOrderId').value = orderId;
         });
     </script>
 </body>
