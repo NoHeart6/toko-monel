@@ -12,7 +12,7 @@ Aplikasi web modern untuk penjualan perhiasan monel dengan fitur manajemen produ
 - 🛒 Keranjang belanja real-time
 - 💳 Sistem pembayaran terintegrasi
 - 📱 Responsive design untuk mobile dan desktop
-- 🔐 Autentikasi dan otorisasi pengguna
+- 🔐 Autentikasi menggunakan email
 - 📊 Dashboard admin dengan analitik
 - 🎨 UI/UX modern dan intuitif
 
@@ -88,12 +88,12 @@ http://localhost:3000
 ## 👥 Akun Default
 
 ### Admin
-- Username: `admin`
-- Password: `admin123`
+- Email: admin@tokomonel.com
+- Password: admin123
 
 ### Demo User
-- Username: `demo`
-- Password: `demo123`
+- Email: demo@tokomonel.com
+- Password: demo123
 
 ## 📁 Struktur Project
 
