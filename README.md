@@ -15,6 +15,12 @@ Aplikasi web modern untuk penjualan perhiasan monel dengan fitur manajemen produ
 - 🔐 Autentikasi menggunakan email
 - 📊 Dashboard admin dengan analitik
 - 🎨 UI/UX modern dan intuitif
+- 📦 Manajemen stok produk
+- 🔍 Pencarian produk
+- 📸 Upload gambar produk
+- 📱 Tampilan responsif
+- 💰 Konfirmasi pembayaran
+- 📊 Laporan penjualan
 
 ## 📋 Persyaratan Sistem
 
@@ -31,7 +37,7 @@ Aplikasi web modern untuk penjualan perhiasan monel dengan fitur manajemen produ
 
 ```bash
 # Clone repository
-git clone https://github.com/username/toko_monel.git
+git clone https://github.com/NoHeart6/toko-monel.git
 
 # Masuk ke direktori project
 cd toko_monel
@@ -90,10 +96,21 @@ http://localhost:3000
 ### Admin
 - Email: admin@tokomonel.com
 - Password: admin123
+- Fitur:
+  - Manajemen produk
+  - Manajemen stok
+  - Konfirmasi pembayaran
+  - Lihat laporan penjualan
+  - Dashboard analytics
 
 ### Demo User
 - Email: demo@tokomonel.com
 - Password: demo123
+- Fitur:
+  - Lihat katalog produk
+  - Tambah ke keranjang
+  - Checkout dan pembayaran
+  - Riwayat pesanan
 
 ## 📁 Struktur Project
 
@@ -157,6 +174,16 @@ public function seedProducts() {
    - Cek log MongoDB: `tail -f /var/log/mongodb/mongod.log`
    - Validasi kredensial di `.env`
 
+3. **Error Login**
+   - Pastikan email dan password sesuai
+   - Cek koneksi database
+   - Periksa tabel users di MongoDB
+
+4. **Error Upload Gambar**
+   - Periksa permission folder uploads
+   - Pastikan ukuran file tidak melebihi batas
+   - Validasi tipe file yang diizinkan
+
 ## 🤝 Kontribusi
 
 Kami sangat menghargai kontribusi! Silakan ikuti langkah berikut:
@@ -190,4 +217,4 @@ Project ini dilisensikan di bawah MIT License - lihat file [LICENSE](LICENSE) un
 - Discord: [Join Server](https://discord.gg/tokomonel)
 
 ---
-Dibuat dengan ❤️ oleh Tim Toko Monel 
+Dibuat dengan ❤️ oleh Tim Toko Monel
