@@ -323,148 +323,83 @@ $totalPages = ceil($totalProducts / $limit);
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand animate__animated animate__fadeIn" href="index.php">Toko Monel</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="products.php">Produk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cart.php">Keranjang</a>
-                    </li>
-                    <?php if (isLoggedIn()): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="orders.php">Pesanan Saya</a>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-                <form class="search-form d-flex" method="get">
-                    <input class="form-control" type="search" name="search" placeholder="Cari produk..." value="<?php echo htmlspecialchars($search); ?>">
-                    <button type="submit"><i class="fas fa-search"></i></button>
-                </form>
-                <ul class="navbar-nav">
-                    <?php if (isLoggedIn()): ?>
-                        <?php if (isAdmin()): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="admin/dashboard.php">Admin Panel</a>
-                            </li>
-                        <?php endif; ?>
-                        <li class="nav-item">
-                            <span class="nav-link">Selamat datang, <?php echo $_SESSION['username']; ?></span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="register.php">Register</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php include 'includes/header.php'; ?>
 
     <div class="page-header">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h1 class="animate__animated animate__slideInDown">Semua Produk</h1>
-                </div>
-                <div class="col-md-6">
-                    <div class="filter-buttons text-end animate__animated animate__slideInUp">
-                        <a href="?sort=newest" class="btn <?php echo $sort === 'newest' ? 'active' : 'btn-light'; ?>">
-                            <i class="fas fa-clock"></i> Terbaru
-                        </a>
-                        <a href="?sort=price_low" class="btn <?php echo $sort === 'price_low' ? 'active' : 'btn-light'; ?>">
-                            <i class="fas fa-sort-amount-down"></i> Harga Terendah
-                        </a>
-                        <a href="?sort=price_high" class="btn <?php echo $sort === 'price_high' ? 'active' : 'btn-light'; ?>">
-                            <i class="fas fa-sort-amount-up"></i> Harga Tertinggi
-                        </a>
-                        <a href="?sort=stock_low" class="btn <?php echo $sort === 'stock_low' ? 'active' : 'btn-light'; ?>">
-                            <i class="fas fa-box"></i> Stok Menipis
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <h1>Katalog Produk</h1>
         </div>
     </div>
 
     <div class="container">
+        <?php if (isset($_SESSION['cart_message'])): ?>
+            <div class="alert alert-<?php echo $_SESSION['cart_message']['type']; ?> animate__animated animate__fadeIn">
+                <?php 
+                echo $_SESSION['cart_message']['text'];
+                unset($_SESSION['cart_message']);
+                ?>
+            </div>
+        <?php endif; ?>
+
         <div class="row">
             <?php foreach ($products as $product): ?>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <?php 
-                        // Base64 image untuk default "no image"
-                        $defaultImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NjY2NjYyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDEzIDEwIDQgMjEiPjwvcG9seWxpbmU+PC9zdmc+';
+            <div class="col-md-4 col-lg-3">
+                <div class="card">
+                    <?php 
+                    // Cek dan tampilkan gambar
+                    $imageUrl = null;
+                    if (!empty($product->image_url)) {
+                        $imageUrl = $product->image_url;
+                    } elseif (!empty($product->image)) {
+                        $imageUrl = $product->image;
+                    }
+                    
+                    // Gambar default jika tidak ada gambar
+                    $defaultImage = 'assets/images/no-image.jpg';
+                    ?>
+                    
+                    <img src="<?php echo $imageUrl ?: $defaultImage; ?>" 
+                         class="card-img-top" 
+                         alt="<?php echo htmlspecialchars($product->name); ?>"
+                         onerror="this.src='<?php echo $defaultImage; ?>'">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo htmlspecialchars($product->name); ?></h5>
+                        <p class="price">Rp <?php echo number_format($product->price, 0, ',', '.'); ?></p>
+                        <p class="stock">Stok: <?php echo $product->stock; ?></p>
                         
-                        // Cek image_url atau image (untuk kompatibilitas)
-                        $imageUrl = null;
-                        if (isset($product->image_url) && !empty($product->image_url)) {
-                            $imageUrl = $product->image_url;
-                        } elseif (isset($product->image) && !empty($product->image)) {
-                            $imageUrl = $product->image;
-                        }
-                        ?>
-                        <img src="<?php echo $imageUrl ?: $defaultImage; ?>" 
-                             class="card-img-top" 
-                             alt="<?php echo htmlspecialchars($product->name); ?>"
-                             onerror="this.src='<?php echo $defaultImage; ?>'">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title"><?php echo htmlspecialchars($product->name); ?></h5>
-                            <p class="card-text flex-grow-1"><?php echo htmlspecialchars($product->description); ?></p>
-                            <div class="price">Rp <?php echo number_format($product->price, 0, ',', '.'); ?></div>
-                            <div class="stock">
-                                Stok: <?php echo $product->stock; ?>
-                                <?php if ($product->stock <= 5 && $product->stock > 0): ?>
-                                    <div class="alert alert-warning mt-2">
-                                        <i class="fas fa-exclamation-triangle me-2"></i>Stok menipis!
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            <?php if ($product->stock > 0): ?>
-                                <form action="cart.php" method="post">
-                                    <input type="hidden" name="product_id" value="<?php echo $product->_id; ?>">
-                                    <button type="submit" name="add_to_cart" class="btn btn-primary w-100">
-                                        <i class="fas fa-shopping-cart me-2"></i>Tambah ke Keranjang
-                                    </button>
-                                </form>
-                            <?php else: ?>
-                                <button class="btn btn-secondary w-100" disabled>
-                                    <i class="fas fa-times-circle me-2"></i>Stok Habis
+                        <?php if ($product->stock > 0): ?>
+                            <form action="cart.php" method="POST">
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="product_id" value="<?php echo $product->_id; ?>">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-cart-plus me-2"></i>Tambah ke Keranjang
                                 </button>
-                            <?php endif; ?>
-                        </div>
+                            </form>
+                        <?php else: ?>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Stok Habis
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
+            </div>
             <?php endforeach; ?>
         </div>
 
+        <!-- Pagination -->
         <?php if ($totalPages > 1): ?>
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <li class="page-item <?php echo $page === $i ? 'active' : ''; ?>">
-                            <a class="page-link" href="?page=<?php echo $i; ?>&sort=<?php echo $sort; ?>&search=<?php echo urlencode($search); ?>">
-                                <?php echo $i; ?>
-                            </a>
-                        </li>
-                    <?php endfor; ?>
-                </ul>
-            </nav>
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                    <a class="page-link" href="?page=<?php echo $i; ?>&sort=<?php echo $sort; ?>&search=<?php echo urlencode($search); ?>">
+                        <?php echo $i; ?>
+                    </a>
+                </li>
+                <?php endfor; ?>
+            </ul>
+        </nav>
         <?php endif; ?>
     </div>
 

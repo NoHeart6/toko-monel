@@ -4,33 +4,53 @@ require_once __DIR__ . '/../config/database.php';
 function addToCart($userId, $productId, $quantity = 1) {
     global $database;
     
-    $carts = $database->carts;
-    
-    // Cek apakah produk sudah ada di keranjang
-    $existingItem = $carts->findOne([
-        'user_id' => $userId,
-        'product_id' => new MongoDB\BSON\ObjectId($productId),
-        'status' => 'active'
-    ]);
-    
-    if ($existingItem) {
-        // Update quantity jika sudah ada
-        $result = $carts->updateOne(
-            ['_id' => $existingItem->_id],
-            ['$inc' => ['quantity' => $quantity]]
-        );
-    } else {
-        // Tambah item baru ke keranjang
-        $result = $carts->insertOne([
+    // Validasi input
+    if (!$userId || !$productId) {
+        error_log("Error: Invalid input - userId: $userId, productId: $productId");
+        return ['success' => false, 'message' => 'Data tidak valid'];
+    }
+
+    try {
+        $carts = $database->carts;
+        
+        // Cek apakah produk sudah ada di keranjang
+        $existingItem = $carts->findOne([
             'user_id' => $userId,
             'product_id' => new MongoDB\BSON\ObjectId($productId),
-            'quantity' => $quantity,
-            'status' => 'active',
-            'created_at' => new MongoDB\BSON\UTCDateTime()
+            'status' => 'active'
         ]);
+        
+        if ($existingItem) {
+            // Update quantity jika sudah ada
+            $result = $carts->updateOne(
+                ['_id' => $existingItem->_id],
+                ['$inc' => ['quantity' => $quantity]]
+            );
+
+            if ($result->getModifiedCount() > 0) {
+                return ['success' => true, 'message' => 'Quantity produk berhasil diupdate'];
+            }
+        } else {
+            // Tambah item baru ke keranjang
+            $result = $carts->insertOne([
+                'user_id' => $userId,
+                'product_id' => new MongoDB\BSON\ObjectId($productId),
+                'quantity' => $quantity,
+                'status' => 'active',
+                'created_at' => new MongoDB\BSON\UTCDateTime()
+            ]);
+
+            if ($result->getInsertedId()) {
+                return ['success' => true, 'message' => 'Produk berhasil ditambahkan ke keranjang'];
+            }
+        }
+        
+        error_log("Error: Failed to add/update cart - userId: $userId, productId: $productId");
+        return ['success' => false, 'message' => 'Gagal menambahkan produk ke keranjang'];
+    } catch (Exception $e) {
+        error_log("Error in addToCart: " . $e->getMessage());
+        return ['success' => false, 'message' => 'Terjadi kesalahan sistem'];
     }
-    
-    return ['success' => true, 'message' => 'Produk berhasil ditambahkan ke keranjang'];
 }
 
 function updateCartQuantity($userId, $productId, $quantity) {

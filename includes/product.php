@@ -25,70 +25,70 @@ function addDummyProducts() {
             'description' => 'Cincin monel dengan ukiran tradisional, cocok untuk pria dan wanita',
             'price' => 75000,
             'stock' => 20,
-            'image' => 'https://example.com/images/cincin-ukir.jpg'
+            'image' => 'uploads/products/cincin-ukir.jpg'
         ],
         [
             'name' => 'Gelang Monel Rantai',
             'description' => 'Gelang monel model rantai, tahan karat dan anti luntur',
             'price' => 85000,
             'stock' => 15,
-            'image' => 'https://example.com/images/gelang-rantai.jpg'
+            'image' => 'uploads/products/gelang-rantai.jpg'
         ],
         [
             'name' => 'Kalung Monel Titanium',
             'description' => 'Kalung monel kombinasi titanium, elegan dan tahan lama',
             'price' => 120000,
             'stock' => 10,
-            'image' => 'https://example.com/images/kalung-titanium.jpg'
+            'image' => 'uploads/products/kalung-titanium.jpg'
         ],
         [
             'name' => 'Anting Monel Permata',
             'description' => 'Anting monel dengan hiasan permata, cocok untuk acara formal',
             'price' => 65000,
             'stock' => 25,
-            'image' => 'https://example.com/images/anting-permata.jpg'
+            'image' => 'uploads/products/anting-permata.jpg'
         ],
         [
             'name' => 'Cincin Couple Monel',
             'description' => 'Sepasang cincin couple monel dengan desain minimalis',
             'price' => 150000,
             'stock' => 8,
-            'image_url' => 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=500&auto=format&fit=crop'
+            'image' => 'uploads/products/cincin-couple.jpg'
         ],
         [
             'name' => 'Gelang Tangan Monel Premium',
             'description' => 'Gelang tangan monel kualitas premium dengan pengait magnet',
             'price' => 95000,
             'stock' => 12,
-            'image' => 'https://example.com/images/gelang-premium.jpg'
+            'image' => 'uploads/products/gelang-premium.jpg'
         ],
         [
             'name' => 'Set Perhiasan Monel',
             'description' => 'Set lengkap perhiasan monel termasuk kalung, gelang, dan anting',
             'price' => 250000,
             'stock' => 5,
-            'image' => 'https://example.com/images/set-perhiasan.jpg'
+            'image' => 'uploads/products/set-perhiasan.jpg'
         ],
         [
             'name' => 'Cincin Monel Black Edition',
             'description' => 'Cincin monel dengan lapisan hitam elegan',
             'price' => 89000,
             'stock' => 18,
-            'image' => 'https://example.com/images/cincin-black.jpg'
+            'image' => 'uploads/products/cincin-black.jpg'
         ],
         [
             'name' => 'Kalung Liontin Monel',
             'description' => 'Kalung monel dengan liontin unik, cocok untuk kado',
             'price' => 135000,
             'stock' => 7,
-            'image' => 'https://example.com/images/kalung-liontin.jpg'
+            'image' => 'uploads/products/kalung-liontin.jpg'
         ],
         [
             'name' => 'Gelang Kaki Monel',
             'description' => 'Gelang kaki monel dengan hiasan manik-manik',
             'price' => 55000,
             'stock' => 30,
-            'image' => 'https://example.com/images/gelang-kaki.jpg'
+            'image' => 'uploads/products/gelang-kaki.jpg'
         ]
     ];
 

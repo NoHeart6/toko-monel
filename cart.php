@@ -6,26 +6,35 @@ requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
+        $response = null;
+        
         switch ($_POST['action']) {
             case 'add':
-                addToCart($_SESSION['user_id'], $_POST['product_id']);
+                $response = addToCart($_SESSION['user_id'], $_POST['product_id']);
                 break;
             case 'increase':
                 $currentQty = (int)$_POST['current_quantity'];
-                updateCartQuantity($_SESSION['user_id'], $_POST['product_id'], $currentQty + 1);
+                $response = updateCartQuantity($_SESSION['user_id'], $_POST['product_id'], $currentQty + 1);
                 break;
             case 'decrease':
                 $currentQty = (int)$_POST['current_quantity'];
                 if ($currentQty > 1) {
-                    updateCartQuantity($_SESSION['user_id'], $_POST['product_id'], $currentQty - 1);
+                    $response = updateCartQuantity($_SESSION['user_id'], $_POST['product_id'], $currentQty - 1);
                 }
                 break;
             case 'update':
-                updateCartQuantity($_SESSION['user_id'], $_POST['product_id'], (int)$_POST['quantity']);
+                $response = updateCartQuantity($_SESSION['user_id'], $_POST['product_id'], (int)$_POST['quantity']);
                 break;
             case 'remove':
-                removeFromCart($_SESSION['user_id'], $_POST['product_id']);
+                $response = removeFromCart($_SESSION['user_id'], $_POST['product_id']);
                 break;
+        }
+
+        if ($response) {
+            $_SESSION['cart_message'] = [
+                'type' => $response['success'] ? 'success' : 'danger',
+                'text' => $response['message']
+            ];
         }
     }
     header('Location: cart.php');
@@ -332,61 +341,33 @@ $isEmpty = empty($cartItemsArray);
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand animate__animated animate__fadeIn" href="index.php">Toko Monel</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.php">Produk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="cart.php">Keranjang</a>
-                    </li>
-                    <?php if (isLoggedIn()): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="orders.php">Pesanan Saya</a>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <span class="nav-link">Selamat datang, <?php echo $_SESSION['username']; ?></span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="logout.php">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php include 'includes/header.php'; ?>
 
     <div class="page-header">
         <div class="container">
-            <h1 class="animate__animated animate__slideInDown">
-                <i class="fas fa-shopping-cart me-2"></i> Keranjang Belanja
-            </h1>
+            <h1>Keranjang Belanja</h1>
         </div>
     </div>
 
     <div class="container">
+        <?php if (isset($_SESSION['cart_message'])): ?>
+            <div class="alert alert-<?php echo $_SESSION['cart_message']['type']; ?> animate__animated animate__fadeIn">
+                <?php 
+                echo $_SESSION['cart_message']['text'];
+                unset($_SESSION['cart_message']);
+                ?>
+            </div>
+        <?php endif; ?>
+
         <div class="cart-container">
             <?php if ($isEmpty): ?>
-                <div class="empty-cart animate__animated animate__fadeIn">
-                    <i class="fas fa-shopping-basket"></i>
-                    <p>Keranjang belanja Anda kosong.</p>
-                    <a href="products.php" class="btn btn-checkout">
-                        <i class="fas fa-store me-2"></i>Mulai Belanja
-                    </a>
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <p>Keranjang belanja Anda masih kosong</p>
+                    <a href="products.php" class="btn btn-primary">Mulai Belanja</a>
                 </div>
             <?php else: ?>
-            <div class="table-responsive">
+                <div class="table-responsive">
                     <table class="table">
                     <thead>
                         <tr>
